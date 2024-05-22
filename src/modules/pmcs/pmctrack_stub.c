@@ -431,7 +431,7 @@ static struct ftrace_hook ftrace_hooks[] = {
 #endif
 	{.name = "sched_exec"},
 	{.name = "scheduler_tick"},
-	{.name = "finish_task_switch"},
+	{.name = "finish_task_switch.isra.0"},
 #endif
 #if defined CONFIG_X86 && !defined CONFIG_PMC_PERF
 	{.name = "perf_event_nmi_handler"}, // x86 and legacy only
@@ -543,7 +543,7 @@ int fh_install_hook(struct ftrace_hook *hook)
 		} else if(strcmp(hook->name, "scheduler_tick") == 0) {
 			hook->ops.func = fh_ftrace_scheduler_tick;
 			hook->ops.flags = FTRACE_OPS_FL_RCU;
-		} else if(strcmp(hook->name, "finish_task_switch") == 0) {
+		} else if(strcmp(hook->name, "finish_task_switch.isra.0") == 0) {
 			hook->ops.func = fh_ftrace_finish_task_switch;
 			hook->ops.flags = FTRACE_OPS_FL_RCU;
 		} else
