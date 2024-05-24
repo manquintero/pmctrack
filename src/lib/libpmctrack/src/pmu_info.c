@@ -120,7 +120,8 @@ static int parse_csv_file(pmu_info_t *pmu_info)
 		strcat(path_csv, "/etc/events/");
 	} else
 		strcpy(path_csv, "/home/jorge/git/pmctrack/etc/events/");
-	strcat(path_csv, pmu_info->model);
+	//strcat(path_csv, pmu_info->model);
+	strcat(path_csv, "x86_intel-core.broadwell");
 	strcat(path_csv, ".csv");
 
 	if (!(f= fopen(path_csv, "r"))) {
