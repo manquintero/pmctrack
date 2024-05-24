@@ -55,7 +55,7 @@ static struct pmctrack_cpu_model cpu_models[]= {
 	{58,"ivybridge"},{62,"ivybridge-ep"},
 	{60,"haswell"},{63,"haswell-ep"},
 	{79,"broadwell-ep"},
-	{86,"broadwell"},
+	{61,"broadwell"},{86,"broadwell"},
 	{85,"skylake"},
 	{151,"alderlake"},
 	{152,"alderlake"},
