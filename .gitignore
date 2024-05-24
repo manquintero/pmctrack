@@ -55,4 +55,28 @@ dkms.conf
 # Logs
 *.log
 
-
+# Build artifacts
+bin/pmc-events
+bin/pmctrack
+src/modules/pmcs/perf/busybcs_plugin.c
+src/modules/pmcs/perf/cache_part_set.c
+src/modules/pmcs/perf/cache_partitioning.c
+src/modules/pmcs/perf/cbuffer.c
+src/modules/pmcs/perf/dummy_plugin.c
+src/modules/pmcs/perf/edp_core.c
+src/modules/pmcs/perf/group_plugin.c
+src/modules/pmcs/perf/intel_ehfi.c
+src/modules/pmcs/perf/intel_perf_metrics.c
+src/modules/pmcs/perf/intel_rapl_core.c
+src/modules/pmcs/perf/intel_rapl_mm.c
+src/modules/pmcs/perf/intel_rdt_core.c
+src/modules/pmcs/perf/intel_rdt_mm.c
+src/modules/pmcs/perf/intel_rdt_userspace_mm.c
+src/modules/pmcs/perf/ipc_sampling_sf_mm.c
+src/modules/pmcs/perf/mc_experiments.c
+src/modules/pmcs/perf/mchw_core.c
+src/modules/pmcs/perf/monitoring_mod.c
+src/modules/pmcs/perf/pmcsched.c
+src/modules/pmcs/perf/pmctrack_stub.c
+src/modules/pmcs/perf/pmu_config_perf.c
+src/modules/pmcs/perf/syswide.c
