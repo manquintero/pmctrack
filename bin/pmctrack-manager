@@ -160,8 +160,6 @@ function do_build(){
 	echo "Kernel_HZ=${hz_setting}"
 	echo "Processor_bitwidth=${bitw}"
 	echo "***********************************************"
-	echo "Press ENTER to start the build process..."
-	read
 
 	if [ "${userspace_tools_only}" == "" ]; then
 		## Build compatible kernel modules first
