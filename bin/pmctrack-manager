@@ -5,7 +5,7 @@ available_actions=(build version clean build-phi build-user-tools build-android-
 if [ "$action" == "" ]; then
 	action_str=$( echo ${available_actions[*]} | tr ' ' '|' )
 	echo "Usage: pmctrack-manager [${action_str}]" >&2
-	exit 0	
+	exit 0
 fi
 
 if [ "${PMCTRACK_ROOT}" == "" ]; then
@@ -23,7 +23,7 @@ function do_version(){
 	if [ ! -f "${PMCTRACK_ROOT}/etc/version" ]; then
 			echo "Can't find file ${PMCTRACK_ROOT}/etc/version" >&2
 			exit 1
-	fi		
+	fi
 	echo "PMCTrack version ::" `cat "${PMCTRACK_ROOT}"/etc/version`
 	exit 0
 }
@@ -44,17 +44,17 @@ function print_vendor_string(){
 
 	case $id in
 		1*) printf "Intel"
-			return 0 
-			;; 
+			return 0
+			;;
 		2*) printf "AMD"
-			return 0 
-			;; 
+			return 0
+			;;
 		3*) printf "ARM"
-			return 0 
-			;; 
+			return 0
+			;;
 		*) 	printf "Unknown"
-			return 0 
-			;; 
+			return 0
+			;;
 	esac
 }
 
@@ -65,7 +65,7 @@ function figure_out_vendor(){
 		GenuineIntel) return 1;; ## Intel
 		AuthenticAMD) return 2;; ## AMD
 		*) ## It may as well be ARM
-			machine_arch=`uname -m` 
+			machine_arch=`uname -m`
 			if [ "$machine_arch" == "armv7l" ] || [ "$machine_arch" == "aarch64" ]; then
 				return 3 ## ARM
 			else
@@ -89,15 +89,15 @@ function figure_out_kernel_HZ_setting(){
 
 	if [ ! -f "$config_file" ]; then
 		return ${default_hz}
-	fi 
+	fi
 
 	## Retrieve the value of the CONFIG_HZ variable
 	local str=$(grep 'CONFIG_HZ=' ${config_file} | cut -d '=' -f 2)
-	
+
 	if [ "$str" == "" ]; then
 		## Not found in config file
 		return ${default_hz}
-	else 
+	else
 		return $str
 	fi
 }
@@ -108,31 +108,28 @@ function update_compatible_modules(){
 	local bitw=$2
 
 	grep 'CONFIG_PMCTRACK=y' /boot/config-$(uname -r)
-	patched_kernel=$?	
-	
-	if [ "$FORCE_LEGACY" != "yes" ] && [ ${patched_kernel} -ne 0 ]; then
-		compatible_modules=(perf)
-		module_names=(mchw_perf)
-	elif [ "$vendor_str" == "Intel" ]; then
-		compatible_modules=(intel-core core2 perf)
-		module_names=(mchw_intel_core mchw_core2 mchw_perf)
+	patched_kernel=$?
+
+	if [ "$vendor_str" == "Intel" ]; then
+		compatible_modules=(intel-core perf)
+		module_names=(mchw_intel_core mchw_perf)
 	elif [ "$vendor_str" == "AMD" ]; then
 		compatible_modules=(amd perf)
 		module_names=(mchw_amd mchw_perf)
 	else # ARM
 		if [ $bitw -eq 32 ]; then
 			if [ "$ODROID" == "yes" ]; then
-				compatible_modules=(odroid-xu perf)		
+				compatible_modules=(odroid-xu perf)
 				module_names=(mchw_odroid_xu mchw_perf)
 			else
 				compatible_modules=(arm odroid-xu perf)
-				module_names=(mchw_arm mchw_odroid_xu mchw_perf)			
-			fi	
+				module_names=(mchw_arm mchw_odroid_xu mchw_perf)
+			fi
 		else
-			compatible_modules=(arm64 perf)	
+			compatible_modules=(arm64 perf)
 			module_names=(mchw_arm64 mchw_perf)
 		fi
-	fi	
+	fi
 }
 
 
@@ -144,7 +141,7 @@ function do_build(){
 	figure_out_kernel_HZ_setting
 	local hz_setting=$?
 	userspace_tools_only="$1"
-	
+
 	#echo $bitw $vendor_id $hz_setting
 	vendor_str=`print_vendor_string ${vendor_id}`
 	local separator="============================================"
@@ -170,7 +167,7 @@ function do_build(){
 
 		## Go to module directories
 		oldp=$PWD
-		
+
 		## Build the various supported modules
 		i=0
 		for module in ${compatible_modules[*]}
@@ -222,7 +219,7 @@ function do_build(){
 	if [ -f libpmctrack.so ] || [ -f libpmctrack.a ]; then
 		echo "Cleaning up existing object files for libpmctrack"
 		make clean
-		echo "$separator"		
+		echo "$separator"
 	fi
 
 	echo "Building libpmctrack ...."
@@ -275,7 +272,7 @@ function do_clean(){
 	local vendor_id=$?
 	figure_out_kernel_HZ_setting
 	local hz_setting=$?
-	
+
 	#echo $bitw $vendor_id $hz_setting
 	vendor_str=`print_vendor_string ${vendor_id}`
 	local separator="============================================"
@@ -300,7 +297,7 @@ function do_clean(){
 
 	## Go to module directories
 	oldp=$PWD
-	
+
 	## Build the various supported modules
 	i=0
 	for module in ${compatible_modules[*]}
@@ -341,7 +338,7 @@ function do_clean(){
 	## If the library files already exist (clean it)
 	if [ -f libpmctrack.so ] || [ -f libpmctrack.a ]; then
 		echo "Cleaning up libpmctrack"
-		make clean		
+		make clean
 		echo "Done!!"
 		echo "$separator"
 	fi
@@ -383,24 +380,24 @@ function do_build_phi(){
 
 	## Not enough arguments?
 	if [ "$kernel_tree" == "" ]; then
-		echo "Usage: pmctrack-manager build-phi <mpss-root-dir> <kernel-sources-dir>" 
-		exit 1			
+		echo "Usage: pmctrack-manager build-phi <mpss-root-dir> <kernel-sources-dir>"
+		exit 1
 	fi
 
 	if [ ! -d "${mpss_root}" ]; then
-		echo "MPSS root directory not found: ${mpss_root} " 
-		exit 1			
+		echo "MPSS root directory not found: ${mpss_root} "
+		exit 1
 	fi
 
 	if [ ! -d "${kernel_tree}" ]; then
-		echo "Linux kernel sources for the Xeon Phi not found: ${kernel_tree} " 
-		exit 1			
+		echo "Linux kernel sources for the Xeon Phi not found: ${kernel_tree} "
+		exit 1
 	fi
 
 	## Prepare environment...
-	if [ ! -f ${mpss_root}/environment-setup-k1om-mpss-linux ]; then	
-		echo "${mpss_root}/environment-setup-k1om-mpss-linux file not found" 
-		exit 1	
+	if [ ! -f ${mpss_root}/environment-setup-k1om-mpss-linux ]; then
+		echo "${mpss_root}/environment-setup-k1om-mpss-linux file not found"
+		exit 1
 	fi
 
 	. ${mpss_root}/environment-setup-k1om-mpss-linux
@@ -466,7 +463,7 @@ function do_build_phi(){
 	if [ -f libpmctrack.so ] || [ -f libpmctrack.a ]; then
 		echo "Cleaning up existing object files for libpmctrack"
 		make clean
-		echo "$separator"		
+		echo "$separator"
 	fi
 
 	echo "Building libpmctrack ...."
@@ -527,13 +524,13 @@ function do_build_android_odroid(){
 
 	## Not enough arguments?
 	if [ "$kernel_tree" == "" ]; then
-		echo "Usage: pmctrack-manager build-phi <cross_compile> <kernel-sources-dir>" 
-		exit 1			
+		echo "Usage: pmctrack-manager build-phi <cross_compile> <kernel-sources-dir>"
+		exit 1
 	fi
 
 	if [ ! -d "${kernel_tree}" ]; then
-		echo "Linux kernel sources for Android not found: ${kernel_tree} " 
-		exit 1			
+		echo "Linux kernel sources for Android not found: ${kernel_tree} "
+		exit 1
 	fi
 
 	echo "**** Target system information ***"
@@ -548,7 +545,7 @@ function do_build_android_odroid(){
 	echo "*******************************************************************************************"
 
 	oldp=$PWD
-	
+
 	## Go to module directory
 	module=odroid-xu
 	modname="mchw_odroid_xu.ko"
@@ -597,7 +594,7 @@ function do_build_android_odroid(){
 	if [ -f libpmctrack.so ] || [ -f libpmctrack.a ]; then
 		echo "Cleaning up existing object files for libpmctrack"
 		make clean
-		echo "$separator"		
+		echo "$separator"
 	fi
 
 	echo "Building libpmctrack ...."
@@ -704,7 +701,7 @@ function do_load_module(){
 	modname=${module_names[${selected_module}]}
 	moddir=${compatible_modules[${selected_module}]}
 	ko_name="${modname}.ko"
-	
+
 	is_loaded=`lsmod | grep ${modname} | wc -l`
 
 	if [ ${is_loaded} -ge 1 ]; then
@@ -715,7 +712,7 @@ function do_load_module(){
 			case $choice in
 				y|Y) sudo rmmod $modname
 					 good_choice=1
-					 ;; 
+					 ;;
 				n|N) good_choice=1
 					 exit 0
 					;;
@@ -723,7 +720,7 @@ function do_load_module(){
 		done
 	fi
 
-	## Load module 
+	## Load module
 
 	dir_module="${PMCTRACK_ROOT}/src/modules/pmcs/${moddir}"
 	cd ${dir_module}
@@ -732,7 +729,7 @@ function do_load_module(){
 		echo "Module directory not found in the source tree: ${dir_module}"
 		exit 1
 	fi
-	
+
 	## If the ko already exists (clean it)
 	if [ ! -f ${ko_name} ]; then
 		echo "Module file ${dir_module}/${ko_name} not found"
@@ -741,7 +738,7 @@ function do_load_module(){
 
 	echo "Loading kernel module ${modname} ..."
 	sudo insmod ${ko_name}
-	echo "$separator"		
+	echo "$separator"
 }
 
 
@@ -752,7 +749,7 @@ function do_unload_module(){
 
 	#Load
 	if [ "$str" == "" ] || [ ${is_loaded} -ne 1 ]; then
-		echo "No PMCTrack module found" 
+		echo "No PMCTrack module found"
 		exit 1
 	else
 		good_choice=0
@@ -762,7 +759,7 @@ function do_unload_module(){
 			case $choice in
 				y|Y) sudo rmmod $modname
 					 good_choice=1
-					 ;; 
+					 ;;
 				n|N) good_choice=1
 					 exit 0
 					;;
@@ -773,7 +770,7 @@ function do_unload_module(){
 }
 
 
-case $action in 
+case $action in
 	version) do_version
 			 exit 0
 			 ;;
@@ -785,12 +782,12 @@ case $action in
 			;;
 	build-phi) do_build_phi $2 $3
 			   exit 0
-			;;					 
+			;;
 	build-user-tools) do_build 1 | tee build_user.log
 			exit 0
 			;;
 	build-android-odroid*) do_build_android_odroid $2 $3
-			exit 0	
+			exit 0
 			;;
 	load-module) do_load_module $2
 			exit 0
@@ -800,6 +797,6 @@ case $action in
 			;;
 	*)	echo "Unrecognized action :: $action" >&2
 		exit 1
-		;;		 
-esac 
+		;;
+esac
 

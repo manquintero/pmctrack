@@ -328,12 +328,12 @@ int init_mm_manager(struct proc_dir_entry* pmc_dir)
 		return -ENOMEM;
 	}
 
-	/* Register dummy est. module */
-	load_monitoring_module(&dummy_mm);
+	/* Register PMCSched Prototype module */
+	load_monitoring_module(&pmcsched_mm);
 
 	if ((ret=activate_monitoring_module(0))) {
 		remove_proc_entry("mm_manager", pmc_dir);
-		printk(KERN_INFO "Couldn't activate dummy monitoring module\n");
+		printk(KERN_INFO "Couldn't activate PMCSched Prototype monitoring module\n");
 		return ret;
 	}
 
